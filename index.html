@@ -53,12 +53,13 @@ body {
 .screen {
   position: absolute;
   inset: 0;
-  display: none;
+  display: none !important;
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
 }
-.screen.active { display: block; }
+.screen.active { display: block !important; }
+.screen.active.placeholder { display: flex !important; }
 
 /* Slide transition */
 @keyframes slideInRight { from { opacity:0; transform:translateX(24px); } to { opacity:1; transform:translateX(0); } }
