@@ -794,7 +794,29 @@ function init() {
   });
 }
 
-init();
+// Global error display — shows any crash on screen so we can debug from mobile
+window.onerror = function(msg, src, line, col, err) {
+  showError(msg + ' (line ' + line + ')');
+};
+window.onunhandledrejection = function(e) {
+  showError(String(e.reason));
+};
+function showError(msg) {
+  var el = document.getElementById('err-overlay');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'err-overlay';
+    el.style.cssText = 'position:fixed;inset:0;background:#1a0000;color:#ff6666;font-family:monospace;font-size:13px;padding:30px 20px;z-index:9999;overflow-y:auto;white-space:pre-wrap;';
+    document.body.appendChild(el);
+  }
+  el.textContent = '⚠️ KNIGHTLY TASKS ERROR\n\n' + msg + '\n\nIf you see this, screenshot it and send to Claude.';
+}
+
+try {
+  init();
+} catch(e) {
+  showError(e.message + '\n' + e.stack);
+}
 </script>
 </body>
 </html>
