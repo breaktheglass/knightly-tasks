@@ -432,7 +432,7 @@ const LAYOUT = {
    STATE
    ============================================================ */
 let currentWeekKey = mondayKey(new Date());
-let currentScreen  = 'menu';
+let currentScreen  = '';
 
 /* ============================================================
    DATE UTILITIES
@@ -503,21 +503,20 @@ function goScreen(id, dir = 'right') {
   // Save current day before leaving
   if (DAYS.includes(currentScreen)) flushDay(currentScreen);
 
-  const prev = document.getElementById('screen-' + currentScreen);
-  const next = document.getElementById('screen-' + id);
-
-  if (prev) prev.classList.remove('active');
+  // Hide previous screen
+  document.querySelectorAll('.screen.active').forEach(el => el.classList.remove('active'));
 
   currentScreen = id;
 
+  const next = document.getElementById('screen-' + id);
   if (!next) return;
 
   if (id === 'calendar') renderCalendar();
 
   next.classList.add('active');
   next.classList.remove('anim-right', 'anim-left');
-  void next.offsetWidth; // force reflow
-  next.classList.add(dir === 'right' ? 'anim-right' : 'anim-left');
+  void next.offsetWidth;
+  if (dir) next.classList.add(dir === 'right' ? 'anim-right' : 'anim-left');
 
   if (DAYS.includes(id)) loadDay(id);
 }
@@ -783,7 +782,10 @@ function init() {
   // Set initial week display
   setWeekLabels();
 
-  // Save on page hide (mobile back-button, tab close, etc.)
+  // Explicitly navigate to menu so currentScreen is properly set
+  goScreen('menu', null);
+
+  // Save on page hide
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden' && DAYS.includes(currentScreen)) {
       clearTimeout(_saveTimer);
